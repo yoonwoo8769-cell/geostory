@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>지오스토리 M/M 관리시스템 - 데모</title>
+<style>
+  :root {
+    --ink: #17242B;
+    --ink-soft: #46565D;
+    --line: #DDE3E1;
+    --bg: #F5F7F5;
+    --surface: #FFFFFF;
+    --teal: #0F6E56;
+    --teal-bg: #E1F5EE;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --red: #791F1F;
+    --red-bg: #FCEBEB;
+    --green: #27500A;
+    --green-bg: #EAF3DE;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .shell { display: flex; min-height: 100vh; }
+  .nav {
+    width: 200px;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    padding: 20px 12px;
+    flex-shrink: 0;
+  }
+  .brand { font-size: 15px; font-weight: 700; padding: 0 10px 18px; letter-spacing: -0.2px; }
+  .brand span { display: block; font-size: 11px; font-weight: 400; color: var(--ink-soft); margin-top: 2px; }
+  .navitem {
+    display: block;
+    padding: 9px 10px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    margin-bottom: 2px;
+  }
+  .navitem:hover { background: #EFF2F0; }
+  .navitem.active { background: var(--teal-bg); color: var(--teal); font-weight: 500; }
+  .main { flex: 1; padding: 24px 32px; max-width: 980px; }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 22px; gap: 16px; flex-wrap: wrap;
+  }
+  .demo-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--amber-bg); color: var(--amber);
+    font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 500;
+  }
+  .role-picker { font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 8px; }
+  select, input[type=number], input[type=text] {
+    font-family: inherit; font-size: 13.5px; padding: 7px 10px;
+    border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink);
+  }
+  h1 { font-size: 19px; font-weight: 700; margin: 0 0 4px; }
+  .subhead { font-size: 13px; color: var(--ink-soft); margin: 0 0 20px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 22px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .card .label { font-size: 12px; color: var(--ink-soft); margin-bottom: 4px; }
+  .card .value { font-size: 21px; font-weight: 700; }
+  .card .value.warn { color: var(--amber); }
+  .card .value.danger { color: var(--red); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  th, td { text-align: left; padding: 9px 12px; font-size: 13px; border-bottom: 1px solid var(--line); }
+  th { background: #FAFBFA; color: var(--ink-soft); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .b-draft { background: #EFF2F0; color: var(--ink-soft); }
+  .b-submitted, .b-team, .b-dept { background: var(--amber-bg); color: var(--amber); }
+  .b-approved { background: var(--teal-bg); color: var(--teal); }
+  .b-rejected { background: var(--red-bg); color: var(--red); }
+  .b-closed { background: var(--green-bg); color: var(--green); }
+  .btn { font-family: inherit; font-size: 13px; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; color: var(--ink); }
+  .btn:hover { background: #F2F4F2; }
+  .btn.primary { background: var(--ink); color: white; border-color: var(--ink); }
+  .btn.primary:hover { background: #2B3A42; }
+  .btn.small { padding: 4px 10px; font-size: 12px; }
+  .btn.link { border: none; background: none; color: var(--teal); padding: 2px 4px; }
+  .btn.link.danger { color: var(--red); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .form-box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+  .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .field { flex: 1; min-width: 150px; }
+  .field label { display: block; font-size: 12px; color: var(--ink-soft); margin-bottom: 5px; }
+  .field select, .field input { width: 100%; }
+  .rate-line { font-size: 13px; margin-bottom: 12px; padding: 8px 10px; border-radius: 6px; background: #F2F4F2; }
+  .rate-line.over { background: var(--red-bg); color: var(--red); }
+  .empty { padding: 24px; text-align: center; color: var(--ink-soft); font-size: 13px; }
+  .note { font-size: 12px; color: var(--ink-soft); margin-top: 8px; }
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: white; padding: 10px 18px; border-radius: 8px;
+    font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="nav">
+    <div class="brand">지오스토리 M/M<span>관리시스템 · 데모</span></div>
+    <div class="navitem active" data-view="dashboard">대시보드</div>
+    <div class="navitem" data-view="entries">M/M 입력</div>
+    <div class="navitem" data-view="approvals">승인함</div>
+    <div class="navitem" data-view="closing">월마감</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="demo-badge">데모 모드 · 이 브라우저에만 저장됨</div>
+      <div class="role-picker">
+        지금 보는 역할:
+        <select id="roleSelect">
+          <option value="INPUTTER">입력담당자</option>
+          <option value="TEAM_LEAD">팀장</option>
+          <option value="DEPT_HEAD">본부장</option>
+          <option value="MGMT">경영관리</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="view-dashboard"></div>
+    <div id="view-entries" style="display:none;"></div>
+    <div id="view-approvals" style="display:none;"></div>
+    <div id="view-closing" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const EMPLOYEES = [
+  { id: "e1", name: "홍길동", empNo: "E001" },
+  { id: "e2", name: "김철수", empNo: "E002" },
+  { id: "e3", name: "이영희", empNo: "E003" },
+];
+const PROJECTS = [
+  { id: "p1", name: "국가공간정보 갱신사업", code: "PRJ001" },
+  { id: "p2", name: "위성영상 분석 플랫폼 구축", code: "PRJ002" },
+];
+const BASE_HOURS = 160;
+const STORAGE_KEY = "mm-demo-entries";
+
+const STATUS_LABEL = {
+  DRAFT: "작성중", SUBMITTED: "제출(팀장 승인대기)", TEAM_APPROVED: "본부장 승인대기",
+  DEPT_APPROVED: "경영관리 승인대기", MGMT_APPROVED: "최종승인", REJECTED: "반려", CLOSED: "마감"
+};
+const STATUS_BADGE = {
+  DRAFT: "b-draft", SUBMITTED: "b-submitted", TEAM_APPROVED: "b-team", DEPT_APPROVED: "b-dept",
+  MGMT_APPROVED: "b-approved", REJECTED: "b-rejected", CLOSED: "b-closed"
+};
+
+let entries = [];
+let role = "INPUTTER";
+
+function calc(hours) {
+  const rate = Math.round((hours / BASE_HOURS) * 10000) / 100;
+  const mm = Math.round((hours / BASE_HOURS) * 10000) / 10000;
+  return { rate, mm };
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+async function load() {
+  try {
+    const res = await window.storage.get(STORAGE_KEY, false);
+    entries = res ? JSON.parse(res.value) : seedData();
+  } catch {
+    entries = seedData();
+  }
+  render();
+}
+
+async function save() {
+  await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
+}
+
+function seedData() {
+  return [
+    { id: cryptoId(), employeeId: "e1", projectId: "p1", hours: 96, ...calc(96), status: "DRAFT", reason: "" },
+    { id: cryptoId(), employeeId: "e1", projectId: "p2", hours: 64, ...calc(64), status: "DRAFT", reason: "" },
+    { id: cryptoId(), employeeId: "e2", projectId: "p1", hours: 160, ...calc(160), status: "SUBMITTED", reason: "" },
+  ];
+}
+function cryptoId() { return Math.random().toString(36).slice(2, 10); }
+
+function empName(id) { const e = EMPLOYEES.find(x => x.id === id); return e ? `${e.name} (${e.empNo})` : id; }
+function projName(id) { const p = PROJECTS.find(x => x.id === id); return p ? p.name : id; }
+
+function rateSumFor(employeeId) {
+  return entries.filter(e => e.employeeId === employeeId && e.status !== "REJECTED")
+    .reduce((s, e) => s + e.rate, 0);
+}
+
+function switchView(view) {
+  document.querySelectorAll(".navitem").forEach(n => n.classList.toggle("active", n.dataset.view === view));
+  ["dashboard", "entries", "approvals", "closing"].forEach(v => {
+    document.getElementById("view-" + v).style.display = v === view ? "" : "none";
+  });
+  render();
+}
+
+function render() {
+  renderDashboard();
+  renderEntries();
+  renderApprovals();
+  renderClosing();
+}
+
+function renderDashboard() {
+  const el = document.getElementById("view-dashboard");
+  const totalMm = entries.reduce((s, e) => s + e.mm, 0);
+  const submitted = entries.filter(e => e.status !== "DRAFT").length;
+  const rejected = entries.filter(e => e.status === "REJECTED").length;
+  const closed = entries.filter(e => e.status === "CLOSED").length;
+  el.innerHTML = `
+    <h1>대시보드</h1>
+    <p class="subhead">이 화면은 실제 제품의 대시보드와 같은 구조입니다. 숫자는 아래 입력한 데이터를 즉시 반영합니다.</p>
+    <div class="cards">
+      <div class="card"><div class="label">전체 M/M</div><div class="value">${totalMm.toFixed(2)}</div></div>
+      <div class="card"><div class="label">총 입력건수</div><div class="value">${entries.length}</div></div>
+      <div class="card"><div class="label">제출완료</div><div class="value">${submitted}</div></div>
+      <div class="card"><div class="label">반려</div><div class="value ${rejected ? 'warn' : ''}">${rejected}</div></div>
+      <div class="card"><div class="label">마감완료</div><div class="value">${closed}</div></div>
+    </div>
+    <table>
+      <thead><tr><th>직원</th><th>프로젝트</th><th class="num">실투입시간</th><th class="num">투입률</th><th class="num">M/M</th><th>상태</th></tr></thead>
+      <tbody>
+        ${entries.map(e => `
+          <tr>
+            <td>${empName(e.employeeId)}</td>
+            <td>${projName(e.projectId)}</td>
+            <td class="num">${e.hours}h</td>
+            <td class="num">${e.rate.toFixed(2)}%</td>
+            <td class="num">${e.mm.toFixed(2)}</td>
+            <td><span class="badge ${STATUS_BADGE[e.status]}">${STATUS_LABEL[e.status]}</span></td>
+          </tr>`).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderEntries() {
+  const el = document.getElementById("view-entries");
+  const canInput = role === "INPUTTER";
+  el.innerHTML = `
+    <h1>M/M 입력</h1>
+    <p class="subhead">직원을 검색하듯 골라 시간만 입력하면 투입률과 M/M이 자동 계산됩니다. (기준: 월 160시간)</p>
+    ${canInput ? `
+    <div class="form-box">
+      <div class="form-row">
+        <div class="field"><label>직원</label>
+          <select id="f-emp">${EMPLOYEES.map(e => `<option value="${e.id}">${e.name} (${e.empNo})</option>`).join("")}</select>
+        </div>
+        <div class="field"><label>프로젝트</label>
+          <select id="f-prj">${PROJECTS.map(p => `<option value="${p.id}">${p.name}</option>`).join("")}</select>
+        </div>
+        <div class="field"><label>실제 투입시간</label>
+          <input type="number" id="f-hours" value="80" min="0" />
+        </div>
+      </div>
+      <button class="btn primary" id="f-add">입력 저장(작성중)</button>
+      <p class="note">예: 160시간 기준으로 80시간을 입력하면 → 투입률 50%, M/M 0.5로 자동 계산됩니다.</p>
+    </div>
+    ` : `<p class="note">지금 역할(${roleLabel(role)})은 입력 권한이 없습니다. 상단에서 "입력담당자"로 바꿔보세요.</p>`}
+    <table>
+      <thead><tr><th>직원</th><th>프로젝트</th><th class="num">시간</th><th class="num">투입률</th><th class="num">M/M</th><th>상태</th><th></th></tr></thead>
+      <tbody>
+        ${entries.length === 0 ? `<tr><td colspan="7" class="empty">입력된 데이터가 없습니다.</td></tr>` : entries.map(e => `
+          <tr>
+            <td>${empName(e.employeeId)}</td>
+            <td>${projName(e.projectId)}</td>
+            <td class="num">${e.hours}h</td>
+            <td class="num">${e.rate.toFixed(2)}%</td>
+            <td class="num">${e.mm.toFixed(2)}</td>
+            <td><span class="badge ${STATUS_BADGE[e.status]}">${STATUS_LABEL[e.status]}</span></td>
+            <td>
+              ${(e.status === "DRAFT" && canInput) ? `<button class="btn link" data-submit="${e.id}">제출</button>` : ""}
+              ${(e.status === "DRAFT" && canInput) ? `<button class="btn link danger" data-del="${e.id}">삭제</button>` : ""}
+            </td>
+          </tr>`).join("")}
+      </tbody>
+    </table>
+  `;
+
+  if (canInput) {
+    document.getElementById("f-add").onclick = async () => {
+      const employeeId = document.getElementById("f-emp").value;
+      const projectId = document.getElementById("f-prj").value;
+      const hours = Number(document.getElementById("f-hours").value);
+      if (!hours || hours < 0) { toast("실제 투입시간을 올바르게 입력하세요."); return; }
+      const dup = entries.some(x => x.employeeId === employeeId && x.projectId === projectId && x.status !== "REJECTED");
+      if (dup) { toast("동일 직원·프로젝트 조합이 이미 있습니다."); return; }
+      entries.push({ id: cryptoId(), employeeId, projectId, hours, ...calc(hours), status: "DRAFT", reason: "" });
+      await save();
+      toast("저장되었습니다. 새로고침해도 남아있는지 확인해보세요.");
+      render();
+    };
+  }
+
+  el.querySelectorAll("[data-submit]").forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.submit;
+      const entry = entries.find(e => e.id === id);
+      const sum = rateSumFor(entry.employeeId);
+      if (sum > 100) { toast(`투입률 합계 ${sum.toFixed(2)}%로 100%를 초과해 제출할 수 없습니다.`); return; }
+      if (sum < 100) {
+        const reason = prompt(`투입률 합계가 ${sum.toFixed(2)}%로 100% 미만입니다. 미배부 사유를 입력하세요.`);
+        if (!reason) { toast("미배부 사유 입력이 필요합니다."); return; }
+        entry.reason = reason;
+      }
+      entry.status = "SUBMITTED";
+      await save();
+      toast("제출되었습니다. 팀장 승인 대기 상태로 바뀌었습니다.");
+      render();
+    };
+  });
+  el.querySelectorAll("[data-del]").forEach(btn => {
+    btn.onclick = async () => {
+      entries = entries.filter(e => e.id !== btn.dataset.del);
+      await save();
+      render();
+    };
+  });
+}
+
+function roleLabel(r) {
+  return { INPUTTER: "입력담당자", TEAM_LEAD: "팀장", DEPT_HEAD: "본부장", MGMT: "경영관리" }[r];
+}
+
+const NEXT_STAGE = {
+  SUBMITTED: { role: "TEAM_LEAD", next: "TEAM_APPROVED", label: "팀장" },
+  TEAM_APPROVED: { role: "DEPT_HEAD", next: "DEPT_APPROVED", label: "본부장" },
+  DEPT_APPROVED: { role: "MGMT", next: "MGMT_APPROVED", label: "경영관리" },
+};
+
+function renderApprovals() {
+  const el = document.getElementById("view-approvals");
+  const pending = entries.filter(e => NEXT_STAGE[e.status]);
+  el.innerHTML = `
+    <h1>승인함</h1>
+    <p class="subhead">담당자 제출 → 팀장 → 본부장 → 경영관리 순서로만 진행됩니다. 앞 단계를 건너뛴 승인은 이 데모에서도 막힙니다.</p>
+    <table>
+      <thead><tr><th>직원</th><th>프로젝트</th><th class="num">M/M</th><th>현재 상태</th><th>다음 처리자</th><th></th></tr></thead>
+      <tbody>
+        ${pending.length === 0 ? `<tr><td colspan="6" class="empty">승인 대기 중인 건이 없습니다.</td></tr>` : pending.map(e => {
+          const stage = NEXT_STAGE[e.status];
+          const canAct = role === stage.role;
+          return `<tr>
+            <td>${empName(e.employeeId)}</td>
+            <td>${projName(e.projectId)}</td>
+            <td class="num">${e.mm.toFixed(2)}</td>
+            <td><span class="badge ${STATUS_BADGE[e.status]}">${STATUS_LABEL[e.status]}</span></td>
+            <td>${stage.label}</td>
+            <td>
+              <button class="btn small" data-approve="${e.id}" ${canAct ? "" : "disabled"}>승인</button>
+              <button class="btn small" data-reject="${e.id}" ${canAct ? "" : "disabled"}>반려</button>
+            </td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    </table>
+    ${pending.some(e => NEXT_STAGE[e.status].role !== role) ? `<p class="note">비활성화된 버튼은 지금 역할(${roleLabel(role)})의 승인 차례가 아니라는 뜻입니다. 상단에서 역할을 "${roleLabel(pending.length ? NEXT_STAGE[pending[0].status].role : role)}"로 바꿔 다음 단계를 진행해보세요.</p>` : ""}
+  `;
+  el.querySelectorAll("[data-approve]").forEach(btn => {
+    btn.onclick = async () => {
+      const entry = entries.find(e => e.id === btn.dataset.approve);
+      entry.status = NEXT_STAGE[entry.status].next;
+      await save();
+      toast("승인 처리되었습니다.");
+      render();
+    };
+  });
+  el.querySelectorAll("[data-reject]").forEach(btn => {
+    btn.onclick = async () => {
+      const reason = prompt("반려 사유를 입력하세요 (필수)");
+      if (!reason) { toast("반려 사유 입력이 필요합니다."); return; }
+      const entry = entries.find(e => e.id === btn.dataset.reject);
+      entry.status = "REJECTED";
+      entry.reason = reason;
+      await save();
+      toast("반려되었습니다.");
+      render();
+    };
+  });
+}
+
+function renderClosing() {
+  const el = document.getElementById("view-closing");
+  const total = entries.length;
+  const approved = entries.filter(e => e.status === "MGMT_APPROVED").length;
+  const blocking = entries.filter(e => e.status !== "MGMT_APPROVED" && e.status !== "CLOSED" && e.status !== "REJECTED");
+  const canClose = role === "MGMT" && total > 0 && blocking.length === 0;
+  el.innerHTML = `
+    <h1>월마감</h1>
+    <p class="subhead">경영관리만 실행할 수 있고, 미승인 건이 하나라도 있으면 막힙니다.</p>
+    <div class="cards">
+      <div class="card"><div class="label">전체 건수</div><div class="value">${total}</div></div>
+      <div class="card"><div class="label">최종승인 완료</div><div class="value">${approved}</div></div>
+      <div class="card"><div class="label">미완료</div><div class="value ${blocking.length ? 'danger' : ''}">${blocking.length}</div></div>
+    </div>
+    ${blocking.length > 0 ? `
+      <table>
+        <thead><tr><th>직원</th><th>프로젝트</th><th>상태</th></tr></thead>
+        <tbody>${blocking.map(e => `<tr><td>${empName(e.employeeId)}</td><td>${projName(e.projectId)}</td><td><span class="badge ${STATUS_BADGE[e.status]}">${STATUS_LABEL[e.status]}</span></td></tr>`).join("")}</tbody>
+      </table>` : ""}
+    <div style="margin-top:16px;">
+      <button class="btn primary" id="close-btn" ${canClose ? "" : "disabled"}>월마감 실행</button>
+      ${role !== "MGMT" ? `<p class="note">경영관리만 마감할 수 있습니다. 상단에서 역할을 "경영관리"로 바꿔보세요.</p>` : ""}
+      ${role === "MGMT" && blocking.length > 0 ? `<p class="note">미완료 건이 있어 마감이 비활성화되어 있습니다.</p>` : ""}
+    </div>
+  `;
+  const btn = document.getElementById("close-btn");
+  if (btn) btn.onclick = async () => {
+    entries.forEach(e => { if (e.status === "MGMT_APPROVED") e.status = "CLOSED"; });
+    await save();
+    toast("월마감이 완료되었습니다. 이제 이 데이터는 수정할 수 없습니다(재오픈 절차로만 가능).");
+    render();
+  };
+}
+
+document.querySelectorAll(".navitem").forEach(n => n.onclick = () => switchView(n.dataset.view));
+document.getElementById("roleSelect").onchange = (e) => { role = e.target.value; render(); };
+
+load();
+</script>
+</body>
+</html>
