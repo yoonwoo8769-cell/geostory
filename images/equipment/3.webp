@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071d24">
+  <meta name="description" content="지오스토리의 멀티센서 기술, 데이터 융합, 분석과 의사결정의 연결. 사업과 성장 방향을 탐색하세요.">
+  <meta name="robots" content="noindex,nofollow">
+  <title>GEOSTORY | 지구의 변화를 읽다</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="equipment-data.js"></script>
+  <script defer src="pages-extra.js"></script>
+  <script defer src="app.js"></script>
+<link rel="stylesheet" href="screen-design.css"><script defer src="screen-design.js"></script></head>
+<body>
+  <a class="skip-link" href="#main">본문으로 바로가기</a>
+  <header class="header" id="header">
+    <a class="brand" href="#/" aria-label="GEOSTORY 홈"><img src="assets/logo.png" width="200" height="29" alt="GEOSTORY"></a>
+    <nav class="desktop-nav" aria-label="주요 메뉴"><a href="#/story" data-nav="story">회사소개</a><a href="#/business" data-nav="business">핵심기술</a><a href="#/infrastructure" data-nav="infrastructure">센싱 인프라</a><a href="#/solutions" data-nav="solutions">적용분야</a><a href="#/cases" data-nav="cases">수행사례</a><a href="#/ir" data-nav="ir">IR·뉴스</a><a href="#/contact" data-nav="contact">문의하기</a></nav>
+    <div class="header-actions">
+      <button class="icon-button search-open" aria-label="사이트 검색"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
+      <a class="contact-link" href="#/contact">문의하기 <span aria-hidden="true">↗</span></a>
+      <button class="icon-button menu-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
+    </div>
+  </header>
+  <nav id="mobile-nav" class="mobile-nav" aria-label="모바일 주요 메뉴" hidden><a href="#/story">회사소개<span>01</span></a><a href="#/business">핵심기술<span>02</span></a><a href="#/infrastructure">센싱 인프라<span>03</span></a><a href="#/solutions">적용분야<span>04</span></a><a href="#/cases">수행사례<span>05</span></a><a href="#/ir">IR·뉴스<span>06</span></a><a href="#/contact">문의하기<span>07</span></a></nav>
+  <main id="main" tabindex="-1"></main>
+  <footer class="footer">
+    <div class="wrap footer-top"><div><img src="assets/logo-white.png" alt="GEOSTORY" width="200" height="29"><p>지구의 변화를 읽고,<br>더 나은 결정을 연결합니다.</p></div><div class="footer-links"><a href="#/story">회사소개</a><a href="#/infrastructure">센싱 인프라</a><a href="#/business">핵심기술</a><a href="#/solutions">적용분야</a><a href="#/ir">IR·뉴스</a><a href="#/insights">인사이트</a><a href="#/contact">문의하기</a></div><div class="footer-contact"><small>LET’S CONNECT</small><a href="tel:18007453">1800-7453 ↗</a><a href="https://www.geostory.co.kr/main/main.html" target="_blank" rel="noopener noreferrer">기존 공식 홈페이지 ↗</a><a href="#/sources">콘텐츠 출처 및 안내 ↗</a></div></div>
+    <div class="wrap footer-bottom"><span>© GEOSTORY. All rights reserved.</span><span>비공개 검토본 · PRIVATE REVIEW</span><button id="to-top" aria-label="맨 위로 이동">BACK TO TOP ↑</button></div>
+  </footer>
+  <dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><p class="eyebrow" id="search-title">EXPLORE GEOSTORY</p><button class="icon-button dialog-close" aria-label="검색 닫기">×</button></div><label for="search-input" class="sr-only">검색어</label><input id="search-input" placeholder="어떤 이야기가 궁금하신가요?" type="search" autocomplete="off"><p class="search-hint">추천 검색 · 초분광 · 산불 · 성장 · 비전</p><div id="search-results" aria-live="polite"></div></dialog>
+  <dialog id="equipment-dialog" class="equipment-dialog" aria-labelledby="equipment-detail-title"><div class="search-head"><p class="eyebrow">EQUIPMENT DETAIL</p><button class="icon-button equipment-close" aria-label="장비 상세 닫기">×</button></div><h2 id="equipment-detail-title">장비 상세</h2><div id="equipment-detail-content"></div></dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <noscript><div class="noscript">사업 탐색 기능을 사용하려면 브라우저의 JavaScript를 켜 주세요. <a href="https://www.geostory.co.kr">기존 공식 홈페이지 방문</a></div></noscript>
+</body>
+</html>
